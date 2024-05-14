@@ -8,11 +8,10 @@ def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], 
 
     lengths = np.linalg.norm(enemy_poses - player_pos, axis=1)
     
-
-    reversed_angles = np.arctan2(player_pos[1] - enemy_poses[:, 1], player_pos[0] - enemy_poses[:, 0])
-    normalized_angles = np.pi * 2 -  (np.mod(reversed_angles + np.pi, 2 * np.pi) - np.pi)
-    weighetd_average = np.average(normalized_angles, weights=(1/lengths) ** 2)
-    result_angle = np.mod(weighetd_average + np.pi, 2 * np.pi) - np.pi
+    weighed_avg_dx = -np.average(enemy_poses[:, 0] - player_pos[0], weights=50/(lengths**5))
+    weighed_avg_dy = -np.average(enemy_poses[:, 1] - player_pos[1], weights=50/(lengths**5))
+    print(weighed_avg_dx, weighed_avg_dy)
+    result_angle = np.arctan2(weighed_avg_dy, weighed_avg_dx)
 
     # min_length = np.argmin(lengths)
     # min_angle = np.arctan2(player_pos[1] - enemy_poses[min_length, 1], player_pos[0] - enemy_poses[min_length, 0])
