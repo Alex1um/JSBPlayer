@@ -19,7 +19,7 @@ def check_if_point_safe(frame_size, point, dangerous_countours, enemy_rects, rad
         if cv2.pointPolygonTest(countour, point, False) >= 0:
             return False
     for x, y, w, h in enemy_rects:
-        if cv2.pointPolygonTest(countour, (x + w // 2, y + h // 2), False) >= 0:
+        if x <= point[0] <= x + w and y <= point[1] <= y + h:
             return False
     return not np.any(np.linalg.norm(np.array(objects) - np.array(point), axis=1) < radiuses)
 

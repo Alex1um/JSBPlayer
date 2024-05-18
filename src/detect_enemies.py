@@ -28,7 +28,7 @@ def detect_enemies(hsv_frame) -> list[tuple[int, int]]:
             aspect = w / h
             aspect2 = h / w
             circularity = 0
-            if h > 0 and w > 0 and aspect > 20 or aspect2 > 20: # rects
+            if h > 0 and w > 0 and aspect > 20 or aspect2 > 20 or w > fw * 0.9 or h > fh * 0.9: # rects
                 rectangular.append(rectEnemy(x, y, w, h))
                 continue
             elif perimeter > 0: # circles

@@ -8,6 +8,7 @@ from src.preprocess import preprocess
 import numpy as np
 import keyboard
 
+PRESS = False
 
 x_key = {
     1: "d",
@@ -19,9 +20,14 @@ y_key = {
     -1: "w",
 }
 
+def start_press():
+    global PRESS
+    PRESS = not PRESS
+
 def start():
     cap = cv2.VideoCapture("/dev/video0")
     # cap = cv2.VideoCapture("./no_sound.mp4")
+    dash_coords = None
     current_key_x, current_key_y = 0, 0
     while True:
         ret, frame = cap.read()
@@ -35,6 +41,7 @@ def start():
         xp, yp = player
         enemies, rects, radiuses, contours = detect_enemies(hsv_frame)
         dangerous_countours = detect_danger(hsv_frame)
+        cv2.drawContours(frame, dangerous_countours, -1, (0, 0, 255), 2)
         for x, y, w, h in rects: # rects
             if h > w:
                 on_side_points = (x if x > xp else x + w, yp)
@@ -49,30 +56,36 @@ def start():
         
         new_x, new_y = None, None
         if len(enemies) > 0:
-            dash_coords = get_dash_coords((w, h), player, dangerous_countours, enemies, radiuses, rects)
+            dash_coords = get_dash_coords((w, h), player, dangerous_countours, rects, radiuses, enemies)
             if dash_coords is not None:
                 new_x, new_y = dash_coords
                 cv2.circle(frame, (xp + new_x * 20, yp + new_y * 20), 10, (255, 255, 0), -1)
             else:
                 new_x, new_y = get_action(player, enemies, rects, radiuses, center)
                 cv2.circle(frame, (xp + new_x * 10, yp + new_y * 10), 10, (0, 255, 0), -1)
-        if new_x is not None and new_y is not None:
-            if current_key_x != new_x:
-                keyboard.release(x_key[current_key_x])
-                if (new_key := x_key.get(new_x, None)) is not None:
-                    keyboard.press(new_key)
-                current_key_x = new_x
-            if current_key_y != new_y:
-                keyboard.release(y_key[current_key_y])
-                if (new_key := y_key.get(new_y, None)) is not None:
-                    keyboard.press(new_key)
-                current_key_y = new_y
+        if PRESS:
+            if new_x is not None and new_y is not None:
+                if current_key_x != new_x:
+                    if (old_key := x_key.get(current_key_x, None)) is not None:
+                        keyboard.release(old_key)
+                    if (new_key := x_key.get(new_x, None)) is not None:
+                        keyboard.press(new_key)
+                    current_key_x = new_x
+                if current_key_y != new_y:
+                    if (old_key := y_key.get(current_key_y, None)) is not None:
+                        keyboard.release(old_key)
+                    if (new_key := y_key.get(new_y, None)) is not None:
+                        keyboard.press(new_key)
+                    current_key_y = new_y
+            if dash_coords is not None:
+                keyboard.press_and_release("space")
         cv2.imshow("frame", frame)
-        if cv2.waitKey(1000) == ord("q"):
+        if cv2.waitKey(1) == ord("q"):
             break
 
 
 if __name__ == "__main__":
     # start()
     keyboard.add_hotkey("enter", start)
+    keyboard.add_hotkey("r", start_press)
     keyboard.wait("q")

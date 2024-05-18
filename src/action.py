@@ -24,7 +24,8 @@ def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], 
     # min_length = np.argmin(lengths)
     # min_angle = np.arctan2(player_pos[1] - enemy_poses[min_length, 1], player_pos[0] - enemy_poses[min_length, 0])
     # result_angle = min_angle + 2 * np.pi if min_angle < 0 else min_angle
-    
+    if np.nan == result_angle:
+        return 0, 0
     action_x = int(np.sign(np.cos(result_angle)))
     action_y = int(np.sign(np.sin(result_angle)))
 
