@@ -9,8 +9,7 @@ import numpy as np
 
 
 def start():
-    # cap = cv2.VideoCapture("/dev/video0")
-    cap = cv2.VideoCapture("./countours.mp4")
+    cap = cv2.VideoCapture("./chronos-big.mp4")
     while True:
         ret, frame = cap.read()
         frame = preprocess(frame)
@@ -23,6 +22,9 @@ def start():
         xp, yp = player
         enemies, rects, radiuses, contours = detect_enemies(hsv_frame)
         dangerous_countours = detect_danger(hsv_frame)
+        
+        cv2.drawContours(frame, dangerous_countours, -1, (0, 0, 255), 2)
+
         for x, y, w, h in rects: # rects
             if h > w:
                 on_side_points = (x if x > xp else x + w, yp)
@@ -32,16 +34,19 @@ def start():
             radiuses.append(0)
         enemies, radiuses = np.array(enemies), np.array(radiuses)
 
-        for enemy in enemies:
-            cv2.circle(frame, (enemy[0], enemy[1]), 10, (0, 255, 0), -1)
+        for enemy, radius in zip(enemies, radiuses):
+            cv2.circle(frame, (enemy[0], enemy[1]), int(radius) if radius > 0 else 5, (0, 255, 0), -1)
+
         if len(enemies) > 0:
-            dash_coords = get_dash_coords((w, h), player, dangerous_countours, enemies, radiuses, rects)
+            dash_coords = get_dash_coords((w, h), player, dangerous_countours, rects, radiuses, enemies)
             if dash_coords is not None:
+                print(321)
                 new_x, new_y = dash_coords
                 cv2.circle(frame, (xp + new_x * 20, yp + new_y * 20), 10, (255, 255, 0), -1)
             else:
                 new_x, new_y = get_action(player, enemies, rects, radiuses, center)
                 cv2.circle(frame, (xp + new_x * 10, yp + new_y * 10), 10, (0, 255, 0), -1)
+        print("---")
         cv2.imshow("frame", frame)
         if cv2.waitKey(1000) == ord("q"):
             break

@@ -1,7 +1,7 @@
 import cv2
 
-_lower_background_hsv = (160, 20, 50)
-_upper_background_hsv = (180, 200, 200)
+_lower_background_hsv = (100, 40, 50)
+_upper_background_hsv = (230, 200, 200)
 
 
 def detect_danger(hsv_frame):

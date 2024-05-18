@@ -4,12 +4,11 @@ import numpy as np
 DASH_DISTANCE = 100
 
 def is_dash_needed(player_pos, dangerous_countours):
-    is_needed = False
     for countour in dangerous_countours:
         if cv2.pointPolygonTest(countour, player_pos, False) >= 0:
-            is_needed = True
-            break
-    return is_needed
+            print(123)
+            return True
+    return False
 
 
 def check_if_point_safe(frame_size, point, dangerous_countours, enemy_rects, radiuses, objects):

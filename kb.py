@@ -22,9 +22,11 @@ y_key = {
 
 def start_press():
     global PRESS
+    print(1)
     PRESS = not PRESS
 
 def start():
+    global PRESS
     cap = cv2.VideoCapture("/dev/video0")
     # cap = cv2.VideoCapture("./no_sound.mp4")
     dash_coords = None
@@ -80,8 +82,11 @@ def start():
             if dash_coords is not None:
                 keyboard.press_and_release("space")
         cv2.imshow("frame", frame)
-        if cv2.waitKey(1) == ord("q"):
+        key = cv2.waitKey(1)
+        if key == ord("q"):
             break
+        elif key == ord("r"):
+            start_press()
 
 
 if __name__ == "__main__":
