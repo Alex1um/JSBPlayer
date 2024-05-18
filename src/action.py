@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], radiuses: list[int], center: tuple[int, int], search_radius=100) -> tuple[int, int] | None:
+def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], enemy_rects: list[tuple[int, int, int, int]], radiuses: list[int], center: tuple[int, int], search_radius=100) -> tuple[int, int] | None:
 
     radiuses = np.array(radiuses)
     player_pos = np.array(player_pos)
