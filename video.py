@@ -43,7 +43,7 @@ def start():
         if player is not None:
             cv2.circle(frame, (xp, yp), 10, (0, 0, 255), -1)
 
-        cv2.drawContours(frame, dangerous_countours, -1, (0, 255, 255), 2)
+        # cv2.drawContours(frame, dangerous_countours, -1, (0, 255, 255), 2)
         
         if len(enemies) > 0:
             dash_coords = get_dash_coords((w, h), player, dangerous_countours, rects, radiuses, enemies)
