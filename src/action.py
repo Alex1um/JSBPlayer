@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], enemy_rects: list[tuple[int, int, int, int]], radiuses: list[int], center: tuple[int, int], search_radius=150) -> tuple[int, int] | None:
+def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], enemy_rects: list[tuple[int, int, int, int]], radiuses: list[int], center: tuple[int, int], search_radius=100) -> tuple[int, int] | None:
 
     radiuses = np.array(radiuses)
     player_pos = np.array(player_pos)
@@ -14,8 +14,8 @@ def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], 
     lengths = lengths[indexes]
     enemy_poses = enemy_poses[indexes]
     
-    weighed_avg_dx = -np.average(enemy_poses[:, 0] - player_pos[0], weights=100/(lengths**2))
-    weighed_avg_dy = -np.average(enemy_poses[:, 1] - player_pos[1], weights=100/(lengths**2))
+    weighed_avg_dx = -np.average(enemy_poses[:, 0] - player_pos[0], weights=50/(lengths**3))
+    weighed_avg_dy = -np.average(enemy_poses[:, 1] - player_pos[1], weights=50/(lengths**3))
     weighed_avg_dx += (center[0] - player_pos[0]) / 100
     weighed_avg_dy += (center[1] - player_pos[0]) / 100
     # print(weighed_avg_dx, weighed_avg_dy)
@@ -26,9 +26,9 @@ def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], 
     # result_angle = min_angle + 2 * np.pi if min_angle < 0 else min_angle
     val_x = np.sign(np.cos(result_angle))
     val_y = np.sign(np.sin(result_angle))
-    if np.nan == val_x:
+    if np.isnan(val_y):
         val_x = 0
-    if np.nan == val_y:
+    if np.isnan(val_y):
         val_y = 0
     action_x = int(val_x)
     action_y = int(val_y)
