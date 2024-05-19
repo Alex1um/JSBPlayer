@@ -8,7 +8,7 @@ from src.preprocess import preprocess
 import numpy as np
 import keyboard
 
-PRESS = False
+PRESS = True
 
 x_key = {
     1: "d",
@@ -42,19 +42,19 @@ def start():
             continue
         xp, yp = player
         enemies, rects, radiuses, contours = detect_enemies(hsv_frame)
-        dangerous_countours = detect_danger(hsv_frame)
+        dangerous_countours, dangerous_rects = detect_danger(hsv_frame)
         cv2.drawContours(frame, dangerous_countours, -1, (0, 0, 255), 2)
-        for x, y, w, h in rects: # rects
+        for x, y, w, h in rects + dangerous_rects: # rects
             if h > w:
                 on_side_points = (x if x > xp else x + w, yp)
             else:
                 on_side_points = (xp, y if y > yp else y + h)
             enemies.append(on_side_points)
-            radiuses.append(0)
+            radiuses.append(10)
         enemies, radiuses = np.array(enemies), np.array(radiuses)
 
-        for enemy in enemies:
-            cv2.circle(frame, (enemy[0], enemy[1]), 10, (0, 255, 0), -1)
+        for enemy, radius in zip(enemies, radiuses):
+            cv2.circle(frame, (enemy[0], enemy[1]), int(radius) if radius > 0 else 5, (0, 255, 0), -1)
         
         new_x, new_y = None, None
         if len(enemies) > 0:

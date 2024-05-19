@@ -31,11 +31,12 @@ def detect_enemies(hsv_frame) -> list[tuple[int, int]]:
             if h > 0 and w > 0 and aspect > 20 or aspect2 > 20 or w > fw * 0.9 or h > fh * 0.9: # rects
                 rectangular.append(rectEnemy(x, y, w, h))
                 continue
-            elif perimeter > 0: # circles
-                area = cv2.contourArea(contour)
-                circularity = 4 * pi * area / (perimeter * perimeter)
-                if circularity > 0.5 and perimeter > fh * 0.1:
-                    radius = perimeter / (2 * pi)
+            # elif perimeter > 0: # circles
+            #     area = cv2.contourArea(contour)
+            #     circularity = 4 * pi * area / (perimeter * perimeter)
+            #     if circularity > 0.5 and perimeter > fh * 0.1:
+            #         radius = perimeter / (2 * pi)
+            radius = perimeter / (2 * pi)
             radiuses.append(radius)
             objects.append((center_x, center_y))
     

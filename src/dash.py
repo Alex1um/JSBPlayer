@@ -6,7 +6,6 @@ DASH_DISTANCE = 100
 def is_dash_needed(player_pos, dangerous_countours):
     for countour in dangerous_countours:
         if cv2.pointPolygonTest(countour, player_pos, False) >= 0:
-            print(123)
             return True
     return False
 

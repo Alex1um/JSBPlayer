@@ -9,7 +9,11 @@ import numpy as np
 
 
 def start():
-    cap = cv2.VideoCapture("./chronos-big.mp4")
+    # cap = cv2.VideoCapture("./chronos-big.mp4")
+    # cap = cv2.VideoCapture("./light.mp4")
+    # cap = cv2.VideoCapture("./dark.mp4")
+    # cap = cv2.VideoCapture("./darker.mp4")
+    cap = cv2.VideoCapture("./darkest.mp4")
     while True:
         ret, frame = cap.read()
         frame = preprocess(frame)
@@ -21,32 +25,34 @@ def start():
             continue
         xp, yp = player
         enemies, rects, radiuses, contours = detect_enemies(hsv_frame)
-        dangerous_countours = detect_danger(hsv_frame)
+        dangerous_countours, dangerous_rects = detect_danger(hsv_frame)
         
-        cv2.drawContours(frame, dangerous_countours, -1, (0, 0, 255), 2)
 
-        for x, y, w, h in rects: # rects
+        for x, y, w, h in rects + dangerous_rects: # rects
             if h > w:
                 on_side_points = (x if x > xp else x + w, yp)
             else:
                 on_side_points = (xp, y if y > yp else y + h)
             enemies.append(on_side_points)
-            radiuses.append(0)
+            radiuses.append(10)
         enemies, radiuses = np.array(enemies), np.array(radiuses)
 
         for enemy, radius in zip(enemies, radiuses):
             cv2.circle(frame, (enemy[0], enemy[1]), int(radius) if radius > 0 else 5, (0, 255, 0), -1)
 
+        if player is not None:
+            cv2.circle(frame, (xp, yp), 10, (0, 0, 255), -1)
+
+        cv2.drawContours(frame, dangerous_countours, -1, (0, 255, 255), 2)
+        
         if len(enemies) > 0:
             dash_coords = get_dash_coords((w, h), player, dangerous_countours, rects, radiuses, enemies)
             if dash_coords is not None:
-                print(321)
                 new_x, new_y = dash_coords
                 cv2.circle(frame, (xp + new_x * 20, yp + new_y * 20), 10, (255, 255, 0), -1)
             else:
                 new_x, new_y = get_action(player, enemies, rects, radiuses, center)
-                cv2.circle(frame, (xp + new_x * 10, yp + new_y * 10), 10, (0, 255, 0), -1)
-        print("---")
+                cv2.circle(frame, (xp + new_x * 10, yp + new_y * 10), 10, (255, 255, 0), -1)
         cv2.imshow("frame", frame)
         if cv2.waitKey(1000) == ord("q"):
             break
