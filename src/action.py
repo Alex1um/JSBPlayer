@@ -12,12 +12,10 @@ def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], 
     if not np.any(indexes):
         return np.sign(center[0] - player_pos[0]), np.sign(center[1] - player_pos[1])
     lengths = lengths[indexes]
-    print(sorted(lengths))
     enemy_poses = enemy_poses[indexes]
     
     weighed_avg_dx = -np.average(enemy_poses[:, 0] - player_pos[0], weights=100/(lengths**2))
     weighed_avg_dy = -np.average(enemy_poses[:, 1] - player_pos[1], weights=100/(lengths**2))
-    print(weighed_avg_dx, weighed_avg_dy)
     weighed_avg_dx += (center[0] - player_pos[0]) / 100
     weighed_avg_dy += (center[1] - player_pos[0]) / 100
     # print(weighed_avg_dx, weighed_avg_dy)
@@ -34,7 +32,6 @@ def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], 
         val_y = 0
     action_x = int(val_x)
     action_y = int(val_y)
-    print(action_x, action_y)
 
     # x = round(player_pos[0] + count * np.cos(result_angle))
     # y = round(player_pos[1] + count * np.sin(result_angle))
