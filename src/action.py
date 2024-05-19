@@ -14,10 +14,10 @@ def get_action(player_pos: tuple[int, int], enemy_poses: list[tuple[int, int]], 
     lengths = lengths[indexes]
     enemy_poses = enemy_poses[indexes]
     
-    weighed_avg_dx = -np.average(enemy_poses[:, 0] - player_pos[0], weights=50/(lengths**3))
-    weighed_avg_dy = -np.average(enemy_poses[:, 1] - player_pos[1], weights=50/(lengths**3))
-    weighed_avg_dx += (center[0] - player_pos[0]) / 100
-    weighed_avg_dy += (center[1] - player_pos[0]) / 100
+    weighed_avg_dx = -np.average(enemy_poses[:, 0] - player_pos[0], weights=50/(lengths**4))
+    weighed_avg_dy = -np.average(enemy_poses[:, 1] - player_pos[1], weights=50/(lengths**4))
+    weighed_avg_dx += (center[0] - player_pos[0]) / 200
+    weighed_avg_dy += (center[1] - player_pos[0]) / 200
     # print(weighed_avg_dx, weighed_avg_dy)
     result_angle = np.arctan2(weighed_avg_dy, weighed_avg_dx)
 

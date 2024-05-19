@@ -37,7 +37,7 @@ def detect_enemies(hsv_frame) -> list[tuple[int, int]]:
             #     if circularity > 0.5 and perimeter > fh * 0.1:
             #         radius = perimeter / (2 * pi)
             radius = perimeter / (2 * pi)
-            radius = radius if radius > 7 else 7
+            radius = radius if radius > 10 else 10
             radiuses.append(radius)
             objects.append((center_x, center_y))
     
