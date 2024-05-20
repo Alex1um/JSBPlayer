@@ -18,6 +18,7 @@ def detect_enemies(hsv_frame, player_pos: tuple[int, int]) -> list[tuple[int, in
     rectangular = []
     rectangular_radiuses = []
     radiuses = []
+    small_objects = []
     for contour in contours:
         M = cv2.moments(contour)
         if M["m00"] != 0:
@@ -44,8 +45,10 @@ def detect_enemies(hsv_frame, player_pos: tuple[int, int]) -> list[tuple[int, in
             #     if circularity > 0.5 and perimeter > fh * 0.1:
             #         radius = perimeter / (2 * pi)
             radius = perimeter / (2 * pi)
+            if radius < 10:
+                small_objects.append((center_x, center_y))
             radius = radius if radius > 10 else 10
             radiuses.append(radius)
             objects.append((center_x, center_y))
 
-    return objects, radiuses, rectangular, rectangular_radiuses, contours
+    return objects, radiuses, rectangular, rectangular_radiuses, contours, small_objects

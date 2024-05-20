@@ -6,9 +6,11 @@ from src.detect_player import detect_player
 import numpy as np
 from src.dash import get_dash_coords, DASH_DISTANCE
 from src.action import get_action
+from src.track import track_objects
 
 
 prev_player = None
+prev_small_objects = None
 
 
 def get_policy(
@@ -20,8 +22,9 @@ def get_policy(
     draw_player=True,
     debug_danger=False,
     debug_enemies=False,
+    debug_tracks=False,
 ) -> tuple[list[list[int, int, int]], list[int | None, int | None], bool]:
-    global prev_player
+    global prev_player, prev_small_objects
     frame = preprocess(frame, crop_black=crop_black)
     h, w, _ = frame.shape
     center = (w // 2, h // 2)
@@ -33,15 +36,20 @@ def get_policy(
         return frame, (None, None), False
     prev_player = player
     xp, yp = player
-    enemies, radiuses, rects, rect_radiuses, enemy_contours = detect_enemies(
+    enemies, radiuses, rects, rect_radiuses, enemy_contours, small_objects = detect_enemies(
         hsv_frame, player
     )
     dangerous_countours, dangerous_rects, dangerous_radiuses = detect_danger(
         hsv_frame, player
     )
 
-    all_enemies = np.array(enemies + rects + dangerous_rects)
-    all_radiuses = np.array(radiuses + rect_radiuses + dangerous_radiuses)
+    small_objects = np.array(small_objects)
+    
+    tracked_points, tracked_radiuses = track_objects(frame, small_objects, prev_small_objects, player, debug_lines=debug_tracks)
+    prev_small_objects = small_objects
+
+    all_enemies = np.array(enemies + rects + dangerous_rects + tracked_points)
+    all_radiuses = np.array(radiuses + rect_radiuses + dangerous_radiuses + tracked_radiuses)
 
     if draw_enemies:
         for enemy, radius in zip(all_enemies, all_radiuses):

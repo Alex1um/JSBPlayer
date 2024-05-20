@@ -4,8 +4,8 @@ from src.policy import get_policy
 
 def start():
     # cap = cv2.VideoCapture("./chronos-big.mp4")
-    cap = cv2.VideoCapture("./light.mp4")
-    # cap = cv2.VideoCapture("./dark.mp4")
+    # cap = cv2.VideoCapture("./light.mp4")
+    cap = cv2.VideoCapture("./dark.mp4")
     # cap = cv2.VideoCapture("./darker.mp4")
     # cap = cv2.VideoCapture("./darkest.mp4")
     while True:
