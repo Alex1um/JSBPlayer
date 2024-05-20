@@ -78,7 +78,11 @@ def get_policy(
             is_dash = True
             if debug_move:
                 cv2.circle(
-                    frame, (xp + new_x * 30, yp + new_y * 30), 10, (255, 255, 0), -1
+                    frame,
+                    (xp + new_x * DASH_DISTANCE, yp + new_y * DASH_DISTANCE),
+                    10,
+                    (255, 255, 0),
+                    -1,
                 )
         else:
             new_x, new_y = get_action(player, all_enemies, all_radiuses, center)
