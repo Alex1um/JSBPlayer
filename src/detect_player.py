@@ -3,13 +3,13 @@ import cv2
 _lower_background_hsv = (70, 220, 220)
 _upper_background_hsv = (100, 255, 255)
 
-def detect_player(hsv_frame) -> tuple[int, int] | None:
+def detect_player(hsv_frame) -> tuple[tuple[int, int] | None, list]:
     mask = cv2.inRange(hsv_frame, _lower_background_hsv, _upper_background_hsv)
 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # Sort contours based on area
-    contours = sorted(contours, key=cv2.contourArea, reverse=True)
+    contours = max(contours, key=cv2.contourArea)
 
     # Get the coordinates of the centroid of the biggest contour
     if len(contours) > 0:

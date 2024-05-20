@@ -6,8 +6,9 @@ _lower_background_hsv = (160, 0, 200)
 _upper_background_hsv = (180, 255, 255)
 rectEnemy = namedtuple('rectEnemy', ['x', 'y', 'w', 'h'])
 
-def detect_enemies(hsv_frame) -> list[tuple[int, int]]:
+def detect_enemies(hsv_frame, player_pos: tuple[int, int]) -> list[tuple[int, int]]:
     fh, fw, *_ = hsv_frame.shape
+    xp, yp = player_pos
     mask = cv2.inRange(hsv_frame, _lower_background_hsv, _upper_background_hsv)
 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -15,6 +16,7 @@ def detect_enemies(hsv_frame) -> list[tuple[int, int]]:
     # Get the coordinates of the centroid of the biggest contour
     objects = []
     rectangular = []
+    rectangular_radiuses = []
     radiuses = []
     for contour in contours:
         M = cv2.moments(contour)
@@ -29,7 +31,12 @@ def detect_enemies(hsv_frame) -> list[tuple[int, int]]:
             aspect2 = h / w
             circularity = 0
             if h > 0 and w > 0 and aspect > 20 or aspect2 > 20 or w > fw * 0.9 or h > fh * 0.9: # rects
-                rectangular.append(rectEnemy(x, y, w, h))
+                if h > w:
+                    on_side_points = (x if x > xp else x + w, yp)
+                else:
+                    on_side_points = (xp, y if y > yp else y + h)
+                rectangular.append(on_side_points)
+                rectangular_radiuses.append(10)
                 continue
             # elif perimeter > 0: # circles
             #     area = cv2.contourArea(contour)
@@ -40,5 +47,5 @@ def detect_enemies(hsv_frame) -> list[tuple[int, int]]:
             radius = radius if radius > 10 else 10
             radiuses.append(radius)
             objects.append((center_x, center_y))
-    
-    return objects, rectangular, radiuses, contours
+
+    return objects, radiuses, rectangular, rectangular_radiuses

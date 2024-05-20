@@ -24,34 +24,27 @@ def start():
         if player is None:
             continue
         xp, yp = player
-        enemies, rects, radiuses, contours = detect_enemies(hsv_frame)
-        dangerous_countours, dangerous_rects = detect_danger(hsv_frame)
+        enemies, radiuses, rects, rect_radiuses = detect_enemies(hsv_frame, player)
+        dangerous_countours, dangerous_rects, dangerous_radiuses = detect_danger(hsv_frame, player)
+
+        all_enemies = np.array(enemies + rects + dangerous_rects)
+        all_radiuses = np.array(radiuses + rect_radiuses + dangerous_radiuses)
         
-
-        for x, y, w, h in rects + dangerous_rects: # rects
-            if h > w:
-                on_side_points = (x if x > xp else x + w, yp)
-            else:
-                on_side_points = (xp, y if y > yp else y + h)
-            enemies.append(on_side_points)
-            radiuses.append(10)
-        enemies, radiuses = np.array(enemies), np.array(radiuses)
-
         for enemy, radius in zip(enemies, radiuses):
             cv2.circle(frame, (enemy[0], enemy[1]), int(radius) if radius > 0 else 5, (0, 255, 0), -1)
 
         if player is not None:
             cv2.circle(frame, (xp, yp), 10, (0, 0, 255), -1)
 
-        # cv2.drawContours(frame, dangerous_countours, -1, (0, 255, 255), 2)
+        cv2.drawContours(frame, dangerous_countours, -1, (0, 255, 255), 2)
         
         if len(enemies) > 0:
-            dash_coords = get_dash_coords((w, h), player, dangerous_countours, rects, radiuses, enemies)
+            dash_coords = get_dash_coords((w, h), player, dangerous_countours, enemies, radiuses)
             if dash_coords is not None:
                 new_x, new_y = dash_coords
                 cv2.circle(frame, (xp + new_x * 20, yp + new_y * 20), 10, (255, 255, 0), -1)
             else:
-                new_x, new_y = get_action(player, enemies, rects, radiuses, center)
+                new_x, new_y = get_action(player, all_enemies, all_radiuses, center)
                 cv2.circle(frame, (xp + new_x * 10, yp + new_y * 10), 10, (255, 255, 0), -1)
         cv2.imshow("frame", frame)
         if cv2.waitKey(1000) == ord("q"):
