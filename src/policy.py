@@ -26,6 +26,9 @@ def get_policy(
     use_tracking=True,
     debug_tracking_points=False,
     debug_simple_enemies=False,
+    debug_enemy_contours=False,
+    draw_enemy_rects=False,
+    draw_enemy_side_points=False,
 ) -> tuple[list[list[int, int, int]], list[int | None, int | None], bool]:
     global prev_player, prev_small_objects
     frame = preprocess(frame, crop_black=crop_black)
@@ -40,7 +43,7 @@ def get_policy(
     prev_player = player
     xp, yp = player
     enemies, radiuses, rects, rect_radiuses, enemy_contours, small_objects = detect_enemies(
-        hsv_frame, player
+        frame, hsv_frame, player, draw_rects=draw_enemy_rects, draw_side_points=draw_enemy_side_points
     )
     dangerous_countours, dangerous_rects, dangerous_radiuses = detect_danger(
         hsv_frame, player
@@ -61,6 +64,9 @@ def get_policy(
 
     all_enemies = np.array(all_enemies)
     all_radiuses = np.array(all_radiuses)
+
+    if debug_enemy_contours:
+        cv2.drawContours(frame, enemy_contours, -1, (0, 255, 255), 2)
 
     if debug_simple_enemies:
         for enemy, radius in zip(enemies, radiuses):
@@ -83,7 +89,7 @@ def get_policy(
             )
 
     if draw_player:
-        cv2.circle(frame, (xp, yp), 10, (255, 255, 0), -1)
+        cv2.circle(frame, (xp, yp), 10, (0, 255, 255), -1)
 
     if debug_danger:
         cv2.drawContours(frame, dangerous_countours, -1, (0, 255, 255), 2)

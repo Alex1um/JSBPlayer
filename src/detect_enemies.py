@@ -6,7 +6,7 @@ _lower_background_hsv = (160, 0, 200)
 _upper_background_hsv = (180, 255, 255)
 rectEnemy = namedtuple('rectEnemy', ['x', 'y', 'w', 'h'])
 
-def detect_enemies(hsv_frame, player_pos: tuple[int, int]) -> list[tuple[int, int]]:
+def detect_enemies(frame, hsv_frame, player_pos: tuple[int, int], draw_rects=False, draw_side_points=False) -> list[tuple[int, int]]:
     fh, fw, *_ = hsv_frame.shape
     xp, yp = player_pos
     mask = cv2.inRange(hsv_frame, _lower_background_hsv, _upper_background_hsv)
@@ -32,10 +32,14 @@ def detect_enemies(hsv_frame, player_pos: tuple[int, int]) -> list[tuple[int, in
             aspect2 = h / w
             circularity = 0
             if h > 0 and w > 0 and aspect > 20 or aspect2 > 20 or w > fw * 0.9 or h > fh * 0.9: # rects
+                if draw_rects:
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
                 if h > w:
                     on_side_points = (x if x > xp else x + w, yp)
                 else:
                     on_side_points = (xp, y if y > yp else y + h)
+                if draw_side_points:
+                    cv2.circle(frame, on_side_points, 10, (0, 255, 255), -1)
                 rectangular.append(on_side_points)
                 rectangular_radiuses.append(10)
                 continue

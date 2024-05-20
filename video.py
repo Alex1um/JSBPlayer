@@ -6,13 +6,13 @@ def mouse_callback(event, x, y, flags, param):
         print(f"Clicked at coordinates: ({x}, {y})")
 
 def start():
-    record = True
-    # cap = cv2.VideoCapture("./chronos-big.mp4")
+    record = False
+    cap = cv2.VideoCapture("./chronos-big.mp4")
     # cap = cv2.VideoCapture("./light.mp4")
     # cap = cv2.VideoCapture("./dark.mp4")
     # cap = cv2.VideoCapture("./darker.mp4")
     # cap = cv2.VideoCapture("./darkest.mp4")
-    cap = cv2.VideoCapture("./presd/detectraw.mp4")
+    # cap = cv2.VideoCapture("./presd/barslargeraw.mp4")
     cv2.namedWindow('frame')
     cv2.setMouseCallback("frame", mouse_callback)
     if record:
@@ -28,21 +28,24 @@ def start():
         frame, action, is_dash = get_policy(
             frame,
             crop_black=True,
-            debug_danger=False,
-            debug_dash=False,
-            debug_move=False,
+            debug_danger=True,
+            debug_dash=True,
+            debug_move=True,
             debug_enemies=False,
             debug_tracks=False,
-            draw_enemies=False,
+            draw_enemies=True,
             use_tracking=False,
             debug_tracking_points=False,
             debug_simple_enemies=False,
             draw_player=False,
+            debug_enemy_contours=False,
+            draw_enemy_rects=False,
+            draw_enemy_side_points=False,
         )
         if record:
             out.write(frame)
         cv2.imshow("frame", frame)
-        if cv2.waitKey(100000) == ord("q"):
+        if cv2.waitKey(1000) == ord("q"):
             break
     cap.release()
     if record:
