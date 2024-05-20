@@ -10,10 +10,10 @@ import numpy as np
 
 def start():
     # cap = cv2.VideoCapture("./chronos-big.mp4")
-    cap = cv2.VideoCapture("./light.mp4")
+    # cap = cv2.VideoCapture("./light.mp4")
     # cap = cv2.VideoCapture("./dark.mp4")
     # cap = cv2.VideoCapture("./darker.mp4")
-    # cap = cv2.VideoCapture("./darkest.mp4")
+    cap = cv2.VideoCapture("./darkest.mp4")
     while True:
         ret, frame = cap.read()
         frame = preprocess(frame)

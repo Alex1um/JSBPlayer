@@ -1,6 +1,7 @@
 import cv2
 
-_lower_background_hsv = (120, 40, 65)
+# _lower_background_hsv = (120, 40, 65)
+_lower_background_hsv = (150, 40, 40)
 _upper_background_hsv = (230, 255, 200)
 
 
