@@ -23,6 +23,7 @@ def get_policy(
     debug_danger=False,
     debug_enemies=False,
     debug_tracks=False,
+    use_tracking=True,
 ) -> tuple[list[list[int, int, int]], list[int | None, int | None], bool]:
     global prev_player, prev_small_objects
     frame = preprocess(frame, crop_black=crop_black)
@@ -43,13 +44,18 @@ def get_policy(
         hsv_frame, player
     )
 
-    small_objects = np.array(small_objects)
-    
-    tracked_points, tracked_radiuses = track_objects(frame, small_objects, prev_small_objects, player, debug_lines=debug_tracks)
-    prev_small_objects = small_objects
+    all_enemies = enemies + rects + dangerous_rects
+    all_radiuses = radiuses + rect_radiuses + dangerous_radiuses
 
-    all_enemies = np.array(enemies + rects + dangerous_rects + tracked_points)
-    all_radiuses = np.array(radiuses + rect_radiuses + dangerous_radiuses + tracked_radiuses)
+    if use_tracking:
+        small_objects = np.array(small_objects)
+        tracked_points, tracked_radiuses = track_objects(frame, small_objects, prev_small_objects, player, debug_lines=debug_tracks)
+        prev_small_objects = small_objects
+        all_enemies.extend(tracked_points)
+        all_radiuses.extend(tracked_radiuses)
+
+    all_enemies = np.array(all_enemies)
+    all_radiuses = np.array(all_radiuses)
 
     if draw_enemies:
         for enemy, radius in zip(all_enemies, all_radiuses):

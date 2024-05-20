@@ -28,7 +28,17 @@ def start():
     current_key_x, current_key_y = 0, 0
     while True:
         ret, frame = cap.read()
-        frame, action, is_dash = get_policy(frame)
+        frame, action, is_dash = get_policy(
+            frame,
+            crop_black=False,
+            debug_danger=True,
+            debug_dash=False,
+            debug_move=False,
+            debug_enemies=True,
+            debug_tracks=True,
+            draw_enemies=True,
+            draw_player=True,
+        )
         new_x, new_y = action
         if PRESS:
             if new_x is not None and new_y is not None:

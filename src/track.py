@@ -13,13 +13,14 @@ def closest_point_on_ray(point, ray_point1, ray_point2):
 
     # Calculate the dot product of the direction vector and the vector from the first point to the given point
     dot_product = np.dot(direction, vector_to_point)
+        
+    # Calculate the length squared of the direction vector
+    length_squared = np.dot(direction, direction)
 
     # If the dot product is negative, the given point is behind the ray, so the closest point is the first point of the ray
-    if dot_product < 0:
+    if dot_product < 0 or np.linalg.norm(ray_point2 - point) / np.sqrt(length_squared) > 4:
         return None
     else:
-        # Calculate the length squared of the direction vector
-        length_squared = np.dot(direction, direction)
 
         # Divide the dot product by the length squared to get the parameter t
         t = dot_product / length_squared
@@ -68,5 +69,5 @@ def track_objects(
         ):
             continue
         enemies.append(on_line)
-        ranges.append(-10)
+        ranges.append(10)
     return enemies, ranges

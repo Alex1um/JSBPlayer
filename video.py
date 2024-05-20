@@ -14,11 +14,12 @@ def start():
             frame,
             crop_black=True,
             debug_danger=True,
-            debug_dash=False,
+            debug_dash=True,
             debug_move=True,
             debug_enemies=True,
             debug_tracks=True,
             draw_enemies=True,
+            use_tracking=True,
         )
         cv2.imshow("frame", frame)
         if cv2.waitKey(100000) == ord("q"):
