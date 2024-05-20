@@ -54,7 +54,7 @@ def start():
                     if (new_key := y_key.get(new_y, None)) is not None:
                         keyboard.press(new_key)
                     current_key_y = new_y
-            if is_dash is not None:
+            if is_dash:
                 keyboard.press_and_release("space")
         cv2.imshow("frame", frame)
         key = cv2.waitKey(1)
