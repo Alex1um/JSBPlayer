@@ -12,16 +12,18 @@ def start():
     # cap = cv2.VideoCapture("./chronos-big.mp4")
     # cap = cv2.VideoCapture("./light.mp4")
     # cap = cv2.VideoCapture("./dark.mp4")
-    # cap = cv2.VideoCapture("./darker.mp4")
-    cap = cv2.VideoCapture("./darkest.mp4")
+    cap = cv2.VideoCapture("./darker.mp4")
+    # cap = cv2.VideoCapture("./darkest.mp4")
     while True:
         ret, frame = cap.read()
-        frame = preprocess(frame)
+        if frame is None or frame.shape is None or frame.shape[0] == 0 or frame.shape[1] == 0:
+            continue
         h, w, _ = frame.shape
         center = (w // 2, h // 2)
         hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         player, player_countours = detect_player(hsv_frame)
         if player is None:
+            print("cont")
             continue
         xp, yp = player
         enemies, radiuses, rects, rect_radiuses = detect_enemies(hsv_frame, player)
@@ -30,7 +32,7 @@ def start():
         all_enemies = np.array(enemies + rects + dangerous_rects)
         all_radiuses = np.array(radiuses + rect_radiuses + dangerous_radiuses)
         
-        for enemy, radius in zip(enemies, radiuses):
+        for enemy, radius in zip(all_enemies, all_radiuses):
             cv2.circle(frame, (enemy[0], enemy[1]), int(radius) if radius > 0 else 5, (0, 255, 0), -1)
 
         if player is not None:

@@ -9,10 +9,11 @@ def detect_player(hsv_frame) -> tuple[tuple[int, int] | None, list]:
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # Sort contours based on area
-    contours = max(contours, key=cv2.contourArea)
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)
 
     # Get the coordinates of the centroid of the biggest contour
     if len(contours) > 0:
+        # contours = max(contours, key=cv2.contourArea)
         M = cv2.moments(contours[0])
         if M["m00"] != 0:
             center_x = int(M["m10"] / M["m00"])
