@@ -1,10 +1,6 @@
 import cv2
-from src.detect_player import detect_player
-from src.detect_enemies import detect_enemies
-from src.detect_danger import detect_danger
-from src.dash import get_dash_coords
-from src.action import get_action
-from src.preprocess import preprocess
+import cv2
+from src.policy import get_policy
 import numpy as np
 import keyboard
 
@@ -29,45 +25,11 @@ def start():
     global PRESS
     cap = cv2.VideoCapture("/dev/video0")
     # cap = cv2.VideoCapture("./no_sound.mp4")
-    dash_coords = None
     current_key_x, current_key_y = 0, 0
-    prev_player = None
     while True:
         ret, frame = cap.read()
-        frame = preprocess(frame)
-        h, w, _ = frame.shape
-        center = (w // 2, h // 2)
-        hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        player, player_countours = detect_player(hsv_frame)
-        if player is None:
-            player = prev_player
-        if player is None:
-            continue
-        prev_player = player
-        xp, yp = player
-        enemies, radiuses, rects, rect_radiuses = detect_enemies(hsv_frame, player)
-        dangerous_countours, dangerous_rects, dangerous_radiuses = detect_danger(hsv_frame, player)
-
-        all_enemies = np.array(enemies + rects + dangerous_rects)
-        all_radiuses = np.array(radiuses + rect_radiuses + dangerous_radiuses)
-        
-        for enemy, radius in zip(all_enemies, all_radiuses):
-            cv2.circle(frame, (enemy[0], enemy[1]), int(radius) if radius > 0 else 5, (0, 255, 0), -1)
-
-        if player is not None:
-            cv2.circle(frame, (xp, yp), 10, (0, 0, 255), -1)
-
-        cv2.drawContours(frame, dangerous_countours, -1, (0, 255, 255), 2)
-        
-        new_x, new_y = None, None
-        if len(enemies) > 0:
-            dash_coords = get_dash_coords((w, h), player, dangerous_countours, all_enemies, all_radiuses)
-            if dash_coords is not None:
-                new_x, new_y = dash_coords
-                cv2.circle(frame, (xp + new_x * 20, yp + new_y * 20), 10, (255, 255, 0), -1)
-            else:
-                new_x, new_y = get_action(player, all_enemies, all_radiuses, center)
-                cv2.circle(frame, (xp + new_x * 10, yp + new_y * 10), 10, (255, 255, 0), -1)
+        frame, action, is_dash = get_policy(frame)
+        new_x, new_y = action
         if PRESS:
             if new_x is not None and new_y is not None:
                 if current_key_x != new_x:
@@ -82,7 +44,7 @@ def start():
                     if (new_key := y_key.get(new_y, None)) is not None:
                         keyboard.press(new_key)
                     current_key_y = new_y
-            if dash_coords is not None:
+            if is_dash is not None:
                 keyboard.press_and_release("space")
         cv2.imshow("frame", frame)
         key = cv2.waitKey(1)
