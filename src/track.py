@@ -68,5 +68,5 @@ def track_objects(
         ):
             continue
         enemies.append(on_line)
-        ranges.append(5)
+        ranges.append(-10)
     return enemies, ranges

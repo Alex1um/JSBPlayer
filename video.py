@@ -10,7 +10,16 @@ def start():
     # cap = cv2.VideoCapture("./darkest.mp4")
     while True:
         ret, frame = cap.read()
-        frame, action, is_dash = get_policy(frame, crop_black=True)
+        frame, action, is_dash = get_policy(
+            frame,
+            crop_black=True,
+            debug_danger=True,
+            debug_dash=False,
+            debug_move=True,
+            debug_enemies=True,
+            debug_tracks=True,
+            draw_enemies=True,
+        )
         cv2.imshow("frame", frame)
         if cv2.waitKey(100000) == ord("q"):
             break
