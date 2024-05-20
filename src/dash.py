@@ -41,7 +41,7 @@ def check_if_point_safe(frame_size, point, dangerous_countours, enemy_contours, 
     return rs if rs != 0 else 50000
 
 
-def get_dash_coords(frame, player_pos, dangerous_countours, enemy_contours, objects, radiuses):
+def get_dash_coords(frame, player_pos, dangerous_countours, enemy_contours, objects, radiuses, debug=False):
     if not is_dash_needed(player_pos, dangerous_countours, objects, radiuses):
         return None
     h, w, _ = frame.shape
@@ -52,8 +52,9 @@ def get_dash_coords(frame, player_pos, dangerous_countours, enemy_contours, obje
     for point in available_points:
         real_point = (player_pos[0] + point[0] * DASH_DISTANCE, player_pos[1] + point[1] * DASH_DISTANCE)
         is_save = check_if_point_safe(frame_size, real_point, dangerous_countours, enemy_contours, objects, radiuses)
-        cv2.circle(frame, real_point, 10, (0, 0, 255), -1)
-        cv2.addText(frame, f"{is_save:.2f} {real_point}", real_point, "Arial", 10, (255, 255, 255))
+        if debug:
+            cv2.circle(frame, real_point, 10, (0, 0, 255), -1)
+            cv2.addText(frame, f"{is_save:.2f} {real_point}", real_point, "Arial", 10, (255, 255, 255))
         if is_save > mx:
             mx = is_save
             mx_p = point
