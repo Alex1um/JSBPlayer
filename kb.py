@@ -31,6 +31,7 @@ def start():
     # cap = cv2.VideoCapture("./no_sound.mp4")
     dash_coords = None
     current_key_x, current_key_y = 0, 0
+    prev_player = None
     while True:
         ret, frame = cap.read()
         frame = preprocess(frame)
@@ -39,7 +40,10 @@ def start():
         hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         player, player_countours = detect_player(hsv_frame)
         if player is None:
+            player = prev_player
+        if player is None:
             continue
+        prev_player = player
         xp, yp = player
         enemies, radiuses, rects, rect_radiuses = detect_enemies(hsv_frame, player)
         dangerous_countours, dangerous_rects, dangerous_radiuses = detect_danger(hsv_frame, player)
@@ -57,7 +61,7 @@ def start():
         
         new_x, new_y = None, None
         if len(enemies) > 0:
-            dash_coords = get_dash_coords((w, h), player, dangerous_countours, enemies, radiuses)
+            dash_coords = get_dash_coords((w, h), player, dangerous_countours, all_enemies, all_radiuses)
             if dash_coords is not None:
                 new_x, new_y = dash_coords
                 cv2.circle(frame, (xp + new_x * 20, yp + new_y * 20), 10, (255, 255, 0), -1)

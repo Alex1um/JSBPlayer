@@ -18,6 +18,6 @@ def detect_player(hsv_frame) -> tuple[tuple[int, int] | None, list]:
         if M["m00"] != 0:
             center_x = int(M["m10"] / M["m00"])
             center_y = int(M["m01"] / M["m00"])
-            return (center_x, center_y), contours
+            return (center_x, center_y)
     
-    return (None), contours
+    return (None)

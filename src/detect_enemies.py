@@ -48,4 +48,4 @@ def detect_enemies(hsv_frame, player_pos: tuple[int, int]) -> list[tuple[int, in
             radiuses.append(radius)
             objects.append((center_x, center_y))
 
-    return objects, radiuses, rectangular, rectangular_radiuses
+    return objects, radiuses, rectangular, rectangular_radiuses, contours

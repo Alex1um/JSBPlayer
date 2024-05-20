@@ -14,17 +14,21 @@ def start():
     # cap = cv2.VideoCapture("./dark.mp4")
     # cap = cv2.VideoCapture("./darker.mp4")
     cap = cv2.VideoCapture("./darkest.mp4")
+    prev_player = None
     while True:
         ret, frame = cap.read()
         frame = preprocess(frame)
         h, w, _ = frame.shape
         center = (w // 2, h // 2)
         hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        player, player_countours = detect_player(hsv_frame)
+        player = detect_player(hsv_frame)
+        if player is None:
+            player = prev_player
         if player is None:
             continue
+        prev_player = player
         xp, yp = player
-        enemies, radiuses, rects, rect_radiuses = detect_enemies(hsv_frame, player)
+        enemies, radiuses, rects, rect_radiuses, enemy_contours = detect_enemies(hsv_frame, player)
         dangerous_countours, dangerous_rects, dangerous_radiuses = detect_danger(hsv_frame, player)
 
         all_enemies = np.array(enemies + rects + dangerous_rects)
@@ -37,9 +41,10 @@ def start():
             cv2.circle(frame, (xp, yp), 10, (0, 0, 255), -1)
 
         cv2.drawContours(frame, dangerous_countours, -1, (0, 255, 255), 2)
+        cv2.drawContours(frame, enemy_contours, -1, (255, 0, 255), 2)
         
         if len(enemies) > 0:
-            dash_coords = get_dash_coords((w, h), player, dangerous_countours, enemies, radiuses)
+            dash_coords = get_dash_coords((w, h), player, dangerous_countours, enemy_contours, all_enemies, all_radiuses)
             if dash_coords is not None:
                 new_x, new_y = dash_coords
                 cv2.circle(frame, (xp + new_x * 20, yp + new_y * 20), 10, (255, 255, 0), -1)
