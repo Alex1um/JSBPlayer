@@ -1,13 +1,18 @@
 import cv2
 from src.policy import get_policy
 
+def mouse_callback(event, x, y, flags, param):
+    if event == cv2.EVENT_LBUTTONDOWN:
+        print(f"Clicked at coordinates: ({x}, {y})")
 
 def start():
     # cap = cv2.VideoCapture("./chronos-big.mp4")
-    # cap = cv2.VideoCapture("./light.mp4")
-    cap = cv2.VideoCapture("./dark.mp4")
+    cap = cv2.VideoCapture("./light.mp4")
+    # cap = cv2.VideoCapture("./dark.mp4")
     # cap = cv2.VideoCapture("./darker.mp4")
     # cap = cv2.VideoCapture("./darkest.mp4")
+    cv2.namedWindow('frame')
+    cv2.setMouseCallback("frame", mouse_callback)
     while True:
         ret, frame = cap.read()
         frame, action, is_dash = get_policy(

@@ -5,7 +5,8 @@ _upper_background_hsv = (100, 255, 255)
 
 def detect_player(hsv_frame) -> tuple[tuple[int, int] | None, list]:
     mask = cv2.inRange(hsv_frame, _lower_background_hsv, _upper_background_hsv)
-
+    cv2.rectangle(mask, (275, 5), (685, 25), (0, 0, 0), cv2.FILLED)
+    cv2.imshow("mask", mask)
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # Sort contours based on area

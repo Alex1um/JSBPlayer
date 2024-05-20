@@ -30,7 +30,7 @@ def start():
         ret, frame = cap.read()
         frame, action, is_dash = get_policy(
             frame,
-            crop_black=False,
+            crop_black=True,
             debug_danger=True,
             debug_dash=False,
             debug_move=False,
