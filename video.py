@@ -6,19 +6,19 @@ def mouse_callback(event, x, y, flags, param):
         print(f"Clicked at coordinates: ({x}, {y})")
 
 def start():
-    record = False
-    cap = cv2.VideoCapture("./chronos-big.mp4")
+    record = True
+    # cap = cv2.VideoCapture("./chronos-big.mp4")
     # cap = cv2.VideoCapture("./light.mp4")
     # cap = cv2.VideoCapture("./dark.mp4")
     # cap = cv2.VideoCapture("./darker.mp4")
     # cap = cv2.VideoCapture("./darkest.mp4")
-    # cap = cv2.VideoCapture("./presd/barslargeraw.mp4")
+    cap = cv2.VideoCapture("./presd/conturs.mp4")
     cv2.namedWindow('frame')
     cv2.setMouseCallback("frame", mouse_callback)
     if record:
         out = cv2.VideoWriter('filename.avi',  
                          cv2.VideoWriter_fourcc(*'MJPG'), 
-                         20, (960, 480))
+                         15, (960, 480))
     else:
         out = None
     while True:
@@ -29,15 +29,15 @@ def start():
             frame,
             crop_black=True,
             debug_danger=True,
-            debug_dash=True,
-            debug_move=True,
+            debug_dash=False,
+            debug_move=False,
             debug_enemies=False,
             debug_tracks=False,
-            draw_enemies=True,
+            draw_enemies=False,
             use_tracking=False,
             debug_tracking_points=False,
             debug_simple_enemies=False,
-            draw_player=False,
+            draw_player=True,
             debug_enemy_contours=False,
             draw_enemy_rects=False,
             draw_enemy_side_points=False,
@@ -45,7 +45,7 @@ def start():
         if record:
             out.write(frame)
         cv2.imshow("frame", frame)
-        if cv2.waitKey(1000) == ord("q"):
+        if cv2.waitKey(11) == ord("q"):
             break
     cap.release()
     if record:

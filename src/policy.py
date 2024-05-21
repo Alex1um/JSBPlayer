@@ -84,7 +84,7 @@ def get_policy(
                 frame,
                 (enemy[0], enemy[1]),
                 int(radius) if radius > 0 else 5,
-                (0, 0, 255),
+                (0, 255, 0),
                 -1,
             )
 
