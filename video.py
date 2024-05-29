@@ -1,24 +1,21 @@
 import cv2
 from src.policy import get_policy
 
+
 def mouse_callback(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
         print(f"Clicked at coordinates: ({x}, {y})")
 
+
 def start():
     record = True
-    # cap = cv2.VideoCapture("./chronos-big.mp4")
-    # cap = cv2.VideoCapture("./light.mp4")
-    # cap = cv2.VideoCapture("./dark.mp4")
-    # cap = cv2.VideoCapture("./darker.mp4")
-    # cap = cv2.VideoCapture("./darkest.mp4")
     cap = cv2.VideoCapture("./presd/conturs.mp4")
-    cv2.namedWindow('frame')
+    cv2.namedWindow("frame")
     cv2.setMouseCallback("frame", mouse_callback)
     if record:
-        out = cv2.VideoWriter('filename.avi',  
-                         cv2.VideoWriter_fourcc(*'MJPG'), 
-                         15, (960, 480))
+        out = cv2.VideoWriter(
+            "filename.avi", cv2.VideoWriter_fourcc(*"MJPG"), 15, (960, 480)
+        )
     else:
         out = None
     while True:

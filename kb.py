@@ -1,7 +1,5 @@
 import cv2
-import cv2
 from src.policy import get_policy
-import numpy as np
 import keyboard
 
 PRESS = True
